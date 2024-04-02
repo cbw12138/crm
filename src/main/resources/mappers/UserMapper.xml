@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hnjd.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.hnjd.vo.User">
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+  </resultMap>
+  <insert id="insert" parameterType="com.hnjd.vo.User">
+    insert into t_user (username, password)
+    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="com.hnjd.vo.User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into t_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null"> id, </if>
+      <if test="userName != null"> user_name, </if>
+      <if test="userPwd != null"> user_pwd, </if>
+      <if test="trueName != null"> true_name, </if>
+      <if test="email != null"> email, </if>
+      <if test="phone != null"> phone, </if>
+      <if test="isValid != null"> is_valid, </if>
+      <if test="createDate != null"> create_date, </if>
+      <if test="updateDate != null"> update_date, </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null"> #{id,jdbcType=INTEGER}, </if>
+      <if test="userName != null"> #{userName,jdbcType=VARCHAR}, </if>
+      <if test="userPwd != null"> #{userPwd,jdbcType=VARCHAR}, </if>
+      <if test="trueName != null"> #{trueName,jdbcType=VARCHAR}, </if>
+      <if test="email != null"> #{email,jdbcType=VARCHAR}, </if>
+      <if test="phone != null"> #{phone,jdbcType=VARCHAR}, </if>
+      <if test="isValid != null"> #{isValid,jdbcType=INTEGER}, </if>
+      <if test="createDate != null"> #{createDate,jdbcType=TIMESTAMP}, </if>
+      <if test="updateDate != null"> #{updateDate,jdbcType=TIMESTAMP}, </if>
+    </trim>
+  </insert>
+  <sql id="Base_Column_List">
+    id, user_name, user_pwd,true_name,email,phone,is_valid,create_date,update_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from t_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_user
+    where uid = #{uid,jdbcType=INTEGER}
+  </delete>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hnjd.vo.User">
+    update t_user
+    <set>
+      <if test="userName !=null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="userPwd !=null">
+        user_pwd = #{userPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="trueName !=null">
+        true_name = #{trueName,jdbcType=VARCHAR},
+      </if>
+      <if test="email !=null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone !=null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="isValid !=null">
+        is_valid = #{isValid,jdbcType=INTEGER},
+      </if>
+      <if test="createDate !=null">
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateDate !=null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="queryUserByName" parameterType="string" resultType="com.hnjd.vo.User">
+    select
+    <include refid="Base_Column_List"/>
+    from t_user where user_name=#{userName}
+  </select>
+
+  <!--查询所有的销售人员-->
+  <select id="queryAllSales" resultType="java.util.Map">
+    select
+        u.id,u.user_name uname
+    from
+        t_user u
+    left join
+        t_user_role ur
+    on
+        u.id=ur.user_id
+    left join
+        t_role r
+    on
+        ur.role_id = r.id
+    where
+        u.is_valid=1
+    and
+        r.is_valid=1
+    and
+        r.role_name='销售'
+  </select>
+
+  <!--多条件查询-->
+  <select id="selectByParams" parameterType="com.hnjd.query.UserQuery" resultType="com.hnjd.vo.User">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        t_user
+    <where>
+      is_valid = 1
+    <!--用户名查询-->
+    <if test="userName !=null and userName!=''">
+      and user_name like concat("%",#{userName},"%")
+    </if>
+    <!--邮箱查询-->
+    <if test="email !=null and email!=''">
+      and email like concat("%",#{email},"%")
+    </if>
+    <!--手机号查询-->
+    <if test="phone !=null and phone!=''">
+      and phone like concat("%",#{phone},"%")
+    </if>
+    </where>
+  </select>
+
+  <!--删除用户-->
+  <update id="deleteBatch">
+    update
+        t_user
+    set 
+        is_valid=0
+    where 
+        id
+    in 
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+  </update>
+
+
+  <!--查询所有的客户经理-->
+  <select id="queryAllCustomerManager" resultType="java.util.Map">
+    select
+      u.id,u.user_name uname
+    from
+      t_user u
+        left join
+      t_user_role ur
+      on
+        u.id=ur.user_id
+        left join
+      t_role r
+      on
+        ur.role_id = r.id
+    where
+      u.is_valid=1
+      and
+      r.is_valid=1
+      and
+      r.role_name='客户经理'
+  </select>
+</mapper>
