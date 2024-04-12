@@ -3,7 +3,6 @@ package com.hnjd.controller;
 import com.hnjd.base.BaseController;
 import com.hnjd.query.CustomerOrderQuery;
 import com.hnjd.service.CustomerOrderService;
-import com.hnjd.vo.CustomerOrder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,6 @@ public class CustomerOrderController extends BaseController {
 
     /**
      * 分页多条件查询客户订单
-     * @return
      */
     @RequestMapping("list")
     @ResponseBody

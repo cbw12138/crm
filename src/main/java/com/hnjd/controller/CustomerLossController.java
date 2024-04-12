@@ -15,7 +15,8 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("customer_loss")
-public class CustomerLossController extends BaseController {
+public class CustomerLossController
+        extends BaseController {
 
     @Resource
     private CustomerLossService customerLossService;
@@ -28,7 +29,6 @@ public class CustomerLossController extends BaseController {
     /**
      * 分页查询流失客户列表
      * @param customerLossQuery
-     * @return
      */
     @RequestMapping("list")
     @ResponseBody
@@ -39,7 +39,6 @@ public class CustomerLossController extends BaseController {
     /**
      * 打开添加暂缓/详情
      * @param id
-     * @return
      */
     @RequestMapping("toCustomerLossPage")
     public String toCustomerLossPage(Integer id, Model model){
@@ -55,7 +54,6 @@ public class CustomerLossController extends BaseController {
      * 更新流失客户的流失状态
      * @param id
      * @param lossReason
-     * @return
      */
     @RequestMapping("updateCustomerLossStateById")
     @ResponseBody
